@@ -200,6 +200,17 @@ describe("ConnectFlowSurface", () => {
     expect(screen.getByRole("button", { name: /finish connecting/i })).toBeEnabled();
   });
 
+  it("holds Finish while a login returning from OAuth is being saved", async () => {
+    state.connectFlow = "flow-handle-123";
+    vi.mocked(fetchConnectFlow).mockResolvedValue(flow("unscoped"));
+    renderSurface();
+    await screen.findByTestId("mcp-apps-panel");
+
+    act(() => panel.onConnectedServers?.("saving-login"));
+
+    expect(screen.getByRole("button", { name: /finish connecting/i })).toBeDisabled();
+  });
+
   it("holds Finish while the list loads after a server was turned off", async () => {
     state.connectFlow = "flow-handle-123";
     vi.mocked(fetchConnectFlow).mockResolvedValue(flow("unscoped"));

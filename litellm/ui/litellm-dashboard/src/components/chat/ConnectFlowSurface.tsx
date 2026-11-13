@@ -31,6 +31,7 @@ const rememberServerIds = (key: string, serverIds: string[]) => {
 };
 
 const finishSelectionFor = (connected: ServerListReport, offServerIds: readonly string[]): FinishSelection => {
+  if (connected === "saving-login") return { status: "waiting" };
   if (typeof connected === "string") {
     return offServerIds.length === 0 ? { status: "ready", serverIds: [] } : { status: "waiting" };
   }

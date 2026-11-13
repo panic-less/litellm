@@ -97,9 +97,15 @@ export interface ConnectedServers {
   all: string[];
 }
 
-export type ServerListReport = ConnectedServers | "loading" | "failed";
+export type ServerListReport = ConnectedServers | "loading" | "failed" | "saving-login";
 
-const listReport = (loading: boolean, loadFailed: boolean, servers: ConnectedServers): ServerListReport => {
+const listReport = (
+  loading: boolean,
+  loadFailed: boolean,
+  savingLogin: boolean,
+  servers: ConnectedServers,
+): ServerListReport => {
+  if (savingLogin) return "saving-login";
   if (loading) return "loading";
   if (loadFailed) return "failed";
   return servers;
@@ -357,13 +363,14 @@ const MCPAppsPanel: React.FC<Props> = ({
     );
 
   const renderServerSwitch = (server: MCPServer) => (
-    <Switch
-      checked={isOn(server)}
-      disabled={switchesLocked}
-      onCheckedChange={(checked) => setServerOn(server, checked)}
-      onClick={(e) => e.stopPropagation()}
-      aria-label={t("chat.mcpAppsPanel.useServer", { serverName: nameOf(server) })}
-    />
+    <span className="inline-flex" onClick={(e) => e.stopPropagation()}>
+      <Switch
+        checked={isOn(server)}
+        disabled={switchesLocked}
+        onCheckedChange={(checked) => setServerOn(server, checked)}
+        aria-label={t("chat.mcpAppsPanel.useServer", { serverName: nameOf(server) })}
+      />
+    </span>
   );
 
   const renderLoginState = (server: MCPServer) => {
@@ -444,8 +451,8 @@ const MCPAppsPanel: React.FC<Props> = ({
     return { on: all.filter((id) => !offServerIds.includes(id)), all };
   }, [servers, offServerIds, connectUnavailabilityLabel]);
   useEffect(() => {
-    onConnectedServers?.(listReport(loading, loadFailed, connectedServers));
-  }, [loading, loadFailed, connectedServers, onConnectedServers]);
+    onConnectedServers?.(listReport(loading, loadFailed, returningOAuth.status === "exchanging", connectedServers));
+  }, [loading, loadFailed, returningOAuth.status, connectedServers, onConnectedServers]);
 
   const emptyStateText = () => {
     if (loadFailed && connectMode) return t("chat.mcpAppsPanel.empty.loadFailed");

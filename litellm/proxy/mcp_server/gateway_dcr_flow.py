@@ -1182,7 +1182,7 @@ async def _describe_upstream_scope_flow(
 
 
 def _marked_unselectable(flow: _ConnectFlow, described: ConnectFlowDescription) -> ConnectFlowDescription:
-    if not flow.unresolved_resource:
+    if not flow.unresolved_resource and not flow.upstream_scopes:
         return described
     unselectable: Final[ConnectFlowDescription] = {**described, "selectable": False}
     return unselectable

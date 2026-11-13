@@ -3783,7 +3783,8 @@ async def test_selection_on_an_upstream_step_up_keeps_the_step_up_server() -> No
     [
         ("https://llm.example.com/mcp/alpha,beta", False, False),
         ("https://llm.example.com/mcp/alpha,beta", True, False),
-        ("https://llm.example.com/mcp", True, "absent"),
+        ("https://llm.example.com/mcp", True, False),
+        ("https://llm.example.com/mcp", False, "absent"),
     ],
 )
 async def test_the_page_is_told_when_a_flow_ignores_picks(resource: str, step_up: bool, selectable: bool | str) -> None:

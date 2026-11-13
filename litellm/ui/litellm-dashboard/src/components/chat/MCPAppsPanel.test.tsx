@@ -290,6 +290,8 @@ describe("MCPAppsPanel switches in connect mode", () => {
     render(<SwitchPage onConnectedServers={onConnectedServers} initialOff={["s-oauth"]} />);
     await screen.findByText("oauth_srv");
 
+    expect(lastReport(onConnectedServers)).toBe("saving-login");
+
     await act(async () => {
       oauthReturn.status = "success";
       oauthReturn.onSuccess();
